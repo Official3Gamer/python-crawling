@@ -1,0 +1,40 @@
+name: Run Web Crawler
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_url:
+        description: 'The starting URL to crawl'
+        required: true
+        default: 'https://example.com'
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install beautifulsoup4
+
+    - name: Run Crawler Script
+      env:
+        START_URL: ${{ github.event.inputs.start_url }}
+      run: |
+        python lnk.py
+
+    - name: Upload Crawled Links Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: crawl-results
+        path: "*.txt"
+        retention-days: 7
