@@ -6,7 +6,7 @@ on:
       start_url:
         description: 'The starting URL to crawl'
         required: true
-        default: 'https://example.com'
+        default: 'https://planet.openstreetmap.org/'
 
 jobs:
   crawl:
