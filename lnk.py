@@ -18,7 +18,7 @@ if not start_url.startswith(('http://', 'https://')):
 
 # Configurable via environment variables for GitHub Actions flexibility, with local fallbacks
 DELAY = int(os.environ.get("CRAWL_DELAY", 5))        # Delay (in seconds) per thread after completing a page
-MAX_WORKERS = int(os.environ.get("MAX_WORKERS", 2))  # Number of pages to scan simultaneously
+MAX_WORKERS = int(os.environ.get("MAX_WORKERS", 10))  # Number of pages to scan simultaneously
 
 # Extract base domain to keep the crawler from wandering off-site
 base_domain = urllib.parse.urlparse(start_url).netloc
