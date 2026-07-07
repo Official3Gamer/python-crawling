@@ -2,31 +2,28 @@ import os
 from tqdm import tqdm
 
 def generate_chunked_urls(base_url, total_records, chunk_size, output_dir="output_chunks"):
-    # Create the output directory if it doesn't exist
+    # Ensure the output directory exists
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         
     print(f"Starting generation for {total_records:,} total lines.")
-    print(f"Files will be split into chunks of {chunk_size:,} lines each.")
+    print(f"Files will split every {chunk_size:,} lines.")
 
     current_chunk = 1
     lines_written_in_chunk = 0
     file_handle = None
 
     try:
-        # tqdm creates an animated progress bar based on the total iteration count
-        for i in tqdm(range(1, total_records + 1), desc="Generating URLs", unit="line"):
-            
-            # Open a new chunk file if necessary
+        for i in tqdm(range(1, total_records + 1), desc="Generating", unit="line"):
+            # Open a new file chunk if we don't have an active one
             if file_handle is None:
                 file_path = os.path.join(output_dir, f"urls_part_{current_chunk}.txt")
                 file_handle = open(file_path, "w", encoding="utf-8")
             
-            # Write the formatted URL
             file_handle.write(f"{base_url}{i}\n")
             lines_written_in_chunk += 1
             
-            # Close the current file if the chunk limit is reached
+            # If the current chunk reaches the limit, close it to open a new one on next loop
             if lines_written_in_chunk >= chunk_size:
                 file_handle.close()
                 file_handle = None
@@ -34,20 +31,21 @@ def generate_chunked_urls(base_url, total_records, chunk_size, output_dir="outpu
                 current_chunk += 1
 
     except KeyboardInterrupt:
-        print("\nOperation paused by user.")
+        print("\nProcess stopped early by user.")
     finally:
-        # Clean up and ensure the final file is properly closed
         if file_handle and not file_handle.closed:
             file_handle.close()
     
-    print("\nGeneration process complete.")
+    print(f"\nDone! Generated {current_chunk if lines_written_in_chunk > 0 else current_chunk - 1} file(s) in '{output_dir}/'.")
 
 if __name__ == "__main__":
-    # Generic configurations
+    # Placeholder domain for safe testing
     DOMAIN = "https://example.com/item/"
     
-    # Configured for a safe, practical test size within environment limits
-    TOTAL_LINES = 50000000  # 50 Million lines
-    CHUNK_LIMIT = 10000000  # 10 Million lines per file
+    # EXAMPLE SETUP: Total lines (35M) is larger than Chunk Limit (10M).
+    # This will automatically create 4 separate files: 
+    # Part 1 (10M), Part 2 (10M), Part 3 (10M), and Part 4 (5M).
+    TOTAL_LINES = 35000000  
+    CHUNK_LIMIT = 10000000  
     
     generate_chunked_urls(DOMAIN, TOTAL_LINES, CHUNK_LIMIT)
