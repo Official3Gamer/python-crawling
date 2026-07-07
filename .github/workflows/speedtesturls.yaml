@@ -27,4 +27,4 @@ jobs:
     # Step 4: Run the script
     # Assumes your script file is named 'generate_data.py' in the root directory
     - name: Run Script
-      run: python generate_data.py
+      run: python speedtesturls.py
