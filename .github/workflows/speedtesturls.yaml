@@ -1,7 +1,7 @@
-name: Run URL Generation Script
+name: Run and Upload URL Chunks
 
 on:
-  workflow_dispatch: # Allows you to manually trigger the script from the Actions tab
+  workflow_dispatch: # Allows you to run this manually from the Actions tab
 
 jobs:
   build-and-run:
@@ -12,19 +12,26 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Step 2: Set up the Python environment
+    # Step 2: Set up Python
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
-    # Step 3: Install required third-party libraries
+    # Step 3: Install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install tqdm
 
-    # Step 4: Run the script
-    # Assumes your script file is named 'generate_data.py' in the root directory
+    # Step 4: Run the script to generate text chunks
     - name: Run Script
-      run: python speedtesturls.py
+      run: python generate_data.py
+
+    # Step 5: Upload all generated text files as a downloadable zip archive
+    - name: Upload Output Chunks
+      uses: actions/upload-artifact@v4
+      with:
+        name: text-file-chunks # The name of the downloadable zip file
+        path: output_chunks/   # Target the entire folder containing the files
+        retention-days: 5      # Automatically deletes the files from GitHub after 5 days to save space
